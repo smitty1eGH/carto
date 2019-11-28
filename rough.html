@@ -1,0 +1,56 @@
+    <html><head>
+    <meta charset="utf-8">
+    <script src="static/d3.v5.min.js"></script>
+    <script src="static/d3-array.v2.min.js"></script>
+    <script src="static/d3-axis.v1.min.js"></script>
+    <script src="static/d3-color.v1.min.js"></script>
+    <script src="static/d3-dsv.v1.min.js"></script>
+    <script src="static/d3-fetch.v1.min.js"></script>
+    <script src="static/d3-format.v1.min.js"></script>
+    <script src="static/d3-interpolate.v1.min.js"></script>
+    <script src="static/d3-path.v1.min.js"></script>
+    <script src="static/d3-time.v1.min.js"></script>
+    <script src="static/d3-time-format.v2.min.js"></script>
+    <script src="static/d3-scale.v3.min.js"></script>
+    <script src="static/d3-scale-chromatic.v1.min.js"></script>
+    <script src="static/d3-selection.v1.min.js"></script>
+    <script src="static/d3-shape.v1.min.js"></script>
+  
+    <script src="static/workly.min.js"></script>
+    <script src="static/rough.min.js"></script>
+
+    <script src="static/roughviz.min.js"></script>
+    <style>
+	    .wrapper {
+	      display: flex;
+	      flex:    wrap;
+              order:   row;
+	    }
+    </style>
+    </head><body>
+      <div class="wrapper">
+        <div id="viz0"></div>
+        <h1>OK</h1>
+      </div>
+    </body>
+    <script>
+new roughViz.Scatter({ 
+   element: '#vis0'
+  ,data: { x:[0.00233802852394799 , 0.00197651473700578 , 0.000261955812789621 
+             ,2.20996857321718e-05, 3.37197244220878e-05, 1.33631807228427e-05 
+             ,7.2663786302554e-06 , 1.71043354614633e-05, 9.91864033243116e-05 
+             ,3.96598620704247e-06] 
+         ,y:[1605, 2038, 1813, 1248, 1305, 1493, 642, 1146, 1008, 596] 
+         }         
+});
+    </script>
+    
+    <html>
+   <!-- 
+                       , title    : 'Turnout as a function of population density'
+                       , width    :  400       
+                       , height   :  450
+                       , yLabel   : 'turnout'
+                       , curbZero :  false
+
+    -->
