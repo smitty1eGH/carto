@@ -1,0 +1,7 @@
+SELECT va.the_geom_webmercator                , COALESCE(va.turnout,0) AS turnout FROM  (SELECT the_geom_webmercator                   , CASE WHEN COALESCE (pop_density,0) > 0                        THEN CAST(tot_votes/pop_density AS INTEGER) END               AS turnout                 FROM   tl_2012_vtd10_pop                 WHERE  statefp10 = '51') AS va;          
+
+
+Query: http://localhost:8888/api/v2/sql?format=GeoJSON&q=SELECT va.the_geom                , COALESCE(va.turnout,0) AS turnout FROM  (SELECT the_geom                   , CASE WHEN COALESCE (pop_density,0) > 0                        THEN CAST(tot_votes/pop_density AS INTEGER) END               AS turnout                        FROM   tl_2012_vtd10_pop                 WHERE  statefp10 = '51') AS va    LIMIT  1;   localhost:5000:46:9
+Will-change memory consumption is too high. Budget limit is the document surface area multiplied by 3 (192000 px). Occurrences of will-change over the budget will be ignored. localhost:5000
+
+d13194a18500a1a1c813bb61aca136c9a19b9652

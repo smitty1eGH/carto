@@ -1,8 +1,7 @@
 <!doctype html>
 <html>
  <head>
-  <title>Malignant Narcissism</title> 
-  
+  <title>Malignant Narcissism</title><meta charset="utf-8" />  
   <link   href='{{ url_for("static",filename="leaflet.css")                      }}' crossorigin="" rel="stylesheet"   />
   <link   href='{{ url_for("static",filename="images/favicon.ico")               }}' crossorigin="" rel="shortcut icon"/>
   <script src ='https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/1.4.0/mapbox-gl.js' crossorigin=""></script>
@@ -16,14 +15,35 @@
 //Access token, attribution text, and raw data sql for Virginia
 var accessT = "pk.eyJ1Ijoic21pdHR5MWUiLCJhIjoiY2syY2NnNmhjMXkyazNib2psYzhuNXc4dyJ9.U-kpFeCWrn84xGTm3PZ_rw";
 var attrib  = 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>';
-var vasql   = "SELECT va.the_geom_webmercator           "
-            + "     , COALESCE(va.turnout,0) AS turnout "
-            + "FROM  (SELECT the_geom_webmercator       "
-            + "            , CASE WHEN COALESCE (pop_density,0) > 0          "
-            + "              THEN CAST(tot_votes/pop_density AS INTEGER) END "
-            + "              AS turnout                 "
-            + "FROM   tl_2012_vtd10_pop                 " 
-            + "WHERE  statefp10 = '51') AS va;          "
+var vasql   = "SELECT jsonb_build_object('type'    ,'FeatureCollection'         " 
+              "                         ,'features', jsonb_agg(feature)  "
+              ")FROM (SELECT jsonb_build_object('type','Feature'  "
+              "                                ,'id'  , gid  "
+              "                                ,'geometry',  "
+              "                                   ST_AsGeoJSON(the_geom)::jsonb  "
+              "                                ,'properties'  "
+              "                          , to_jsonb(inputs) - 'gid' - 'the_geom'"
+              "                                ) AS feature  "
+              "  FROM (  "
+              "    SELECT *  "
+              "    FROM   (  "
+              "           SELECT the_geom  "
+              "                , geoid10             AS gid  "
+              "                , COALESCE(turnout,0) AS turnout  "
+              "           FROM  (SELECT ST_ForceRHR(the_geom) as the_geom   "
+              "                       , geoid10  "
+              "                       , CASE WHEN  "
+              "                            COALESCE (pop_density,0) > 0 THEN  "
+              "                            CAST(tot_votes/pop_density  "
+              "                                             AS INTEGER) END  "
+              "                     AS turnout  "
+              "                 FROM   tl_2012_vtd10_pop  "
+              "                 WHERE  statefp10 = '51') AS va  "
+              "                 LIMIT 2  "
+              "    ) raw  "
+              "  )    inputs  "
+              ")       features;                                                " 
+
 
 //Set up VA map. Coords obtained via http://www.virginiaplaces.org/boundaries/locateva.html
 var corner1 = L.latLng(      39.455826, -83.667404)
@@ -41,16 +61,16 @@ L.tileLayer(      'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_t
 var query = "http://localhost:8888/api/v2/sql?format=GeoJSON&q=" + vasql;
 console.log("Query: " + query);
 
-$.getJSON(query, function(cartodbdata)                {
-            var geojsonlayer = L.geoJson(cartodbdata, { i
-                  onEachFeature : 
-                    function(feature, layer){
-                      layer.bindPopup( "<h2> Turnout-to-pop: " 
-                                     +  feature.properties.turnout  
-                                     + "</h2>"
-                    )}
-            }).addTo(mymap);
-            mymap.fitBounds(group.getBounds()); // zooms to fit data
+$.getJSON(query, function(cartodbdata)      {
+  var geojsonlayer = L.geoJson(cartodbdata, { 
+    onEachFeature : 
+      function(feature, layer)              {
+        layer.bindPopup( "<h2> Turnout-to-pop: " 
+                       +  feature.properties.turnout  
+                       + "</h2>"
+      )}
+  }).addTo(mymap);
+  mymap.fitBounds(group.getBounds()); // zooms to fit data
 })
   </script>
  </body>
