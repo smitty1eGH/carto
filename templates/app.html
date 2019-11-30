@@ -4,8 +4,12 @@
   <title>Malignant Narcissism</title><meta charset="utf-8" />  
   <link   href='{{ url_for("static",filename="images/favicon.ico")               }}' crossorigin="" rel="shortcut icon"/>
   <script src ='https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/1.4.0/mapbox-gl.js' crossorigin=""></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous" />
+  <link   rel ="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+  <script src ="https://unpkg.com/leaflet@1.6.0/dist/leaflet-src.js"></script>
+  <!--
+  <link   rel ="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+  -->  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
  </head>
  <body>
@@ -57,23 +61,24 @@ L.tileLayer(      'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_t
    }).addTo(  mymap );
 
 //Obtain and display VA
-var query = "http://localhost:8888/user/development/api/v2/sql?format=GeoJSON&q=" + vasql2;
-console.log("SQL: " + vasql);
-console.log("Query: " + query);
+//var query = "http://localhost:8888/user/development/api/v2/sql?format=GeoJSON&q=" + vasql2;
 
-$.getJSON(query, function(cartodbdata)      {
-  console.log(cartodbdata);
+cartodbdata='{{ res.cartodata|safe }}';
+var geojsonlayer = L.geoJson(cartodbdata, { 
+    onEachFeature : 
+      function(feature, layer)              {
+          console.log(feature.properties.turnout);
+          layer.bindPopup( "<h2> Turnout-to-pop: " 
+                         +  feature.properties.turnout  
+                         + "</h2>"
+      )}
+}).addTo(mymap);
+
+//$.getJSON(query, function(cartodbdata)      {
+//  console.log(cartodbdata);
 //  console.log(cartodbdata['rows'][0]['jsonb_build_object']);
-//  var geojsonlayer = L.geoJson(cartodbdata['rows'][0]['jsonb_build_object'], { 
-  //  onEachFeature : 
-    //  function(feature, layer)              {
-      //  layer.bindPopup( "<h2> Turnout-to-pop: " 
-        //               +  feature.properties.turnout  
-          //             + "</h2>"
-//      )}
-  //}).addTo(mymap);
 //  mymap.fitBounds(group.getBounds()); // zooms to fit data
-})
+//})
   </script>
  </body>
 </html> 
