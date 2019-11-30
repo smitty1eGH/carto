@@ -2,11 +2,11 @@
 <html>
  <head>
   <title>Malignant Narcissism</title><meta charset="utf-8" />  
-  <link   href='{{ url_for("static",filename="leaflet.css")                      }}' crossorigin="" rel="stylesheet"   />
   <link   href='{{ url_for("static",filename="images/favicon.ico")               }}' crossorigin="" rel="shortcut icon"/>
   <script src ='https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/1.4.0/mapbox-gl.js' crossorigin=""></script>
-  <script src ='{{ url_for("static",filename="leaflet.js")                       }}' crossorigin=""></script>
-  <script src ='{{ url_for("static",filename="jquery-3.4.1.min.js")              }}' crossorigin=""></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
  </head>
  <body>
   <div id="mapid" style="width: 600px; height: 400px;"></div>
@@ -24,25 +24,25 @@ var vasql   = "SELECT jsonb_build_object('type'    ,'FeatureCollection'         
               "                                ,'properties'  "
               "                          , to_jsonb(inputs) - 'gid' - 'the_geom'"
               "                                ) AS feature  "
-              "  FROM (  "
+              "  FROM (      "
               "    SELECT *  "
               "    FROM   (  "
               "           SELECT the_geom  "
-              "                , geoid10             AS gid  "
+              "                , geoid10             AS gid      "
               "                , COALESCE(turnout,0) AS turnout  "
               "           FROM  (SELECT ST_ForceRHR(the_geom) as the_geom   "
-              "                       , geoid10  "
+              "                       , geoid10    "
               "                       , CASE WHEN  "
               "                            COALESCE (pop_density,0) > 0 THEN  "
-              "                            CAST(tot_votes/pop_density  "
-              "                                             AS INTEGER) END  "
-              "                     AS turnout  "
-              "                 FROM   tl_2012_vtd10_pop  "
+              "                            CAST(tot_votes/pop_density         "
+              "                                             AS INTEGER) END   "
+              "                     AS turnout                  "
+              "                 FROM   tl_2012_vtd10_pop        "
               "                 WHERE  statefp10 = '51') AS va  "
               "                 LIMIT 2  "
-              "    ) raw  "
-              "  )    inputs  "
-              ")       features;                                                " 
+              "    ) raw                 "
+              "  )    inputs             "
+              ")       features;"; 
 
 
 //Set up VA map. Coords obtained via http://www.virginiaplaces.org/boundaries/locateva.html
